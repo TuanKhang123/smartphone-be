@@ -1,0 +1,29 @@
+Bước 1: Xác định Actors (Ai sử dụng hệ thống?)
+Bước 2: Xác định Features (Họ làm gì?)
+Bước 3: Tìm Entities từ Features (Danh từ nào xuất hiện?)
+Bước 4: Tách Entity chính / phụ (Cái nào là core, cái nào hỗ trợ?)
+
+Bước 5: Xác định Relationships (Chúng liên quan nhau thế nào?)
+Bước 6: Xác định Fields (Mỗi entity cần lưu gì?)
+Bước 7: Xác định Status / Enum (Trạng thái nào cần quản lý?)
+Bước 8: Xác định Index (Query nào cần nhanh?)
+Bước 9: Kiểm tra khả năng mở rộng Phase 2/3 (Thiết kế có bị "chặn" không?)
+
+
+
+- user (admin, user, guest), role 
+- product 
+- brand
+- 
+
+
+*** Hiện tại còn đang thiếu phần quản lý thông tin user khi người dùng đăng nhập rồi.
+
+
+
+
+
+
+
+
+user: 
