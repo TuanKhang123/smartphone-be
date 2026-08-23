@@ -3,12 +3,12 @@ import { Types, Schema, model } from "mongoose";
 export interface ICategory {
   name: string;
   slug: string;
+  status: "active" | "inactive";
   parentId: Types.ObjectId | null;
   description?: string;
   image?: string;
   sortOrder: number;
   attributeIds: Types.ObjectId[];
-  status: "active" | "inactive";
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date | null;

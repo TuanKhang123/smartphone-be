@@ -57,13 +57,13 @@ Mongoose models (đủ field theo mục 4.1–4.8 của `DATABASE_DESIGN.md`, KH
 
 - [x] `Brand` — `src/models/Brand.ts`
 
-- [ ] `AttributeDefinition` — đã phân tích xong field + quan hệ trong hội thoại, **chưa tạo file** `src/models/AttributeDefinition.ts`
+- [x] `AttributeDefinition` — `src/models/AttributeDefinition.ts`
 
-- [ ] `Product`
+- [x] `Product` — `src/models/Product.ts` (bộ field MVP, có `specs` embedded)
 
-- [ ] `ProductVariant`
+- [x] `ProductVariant` — `src/models/ProductVariant.ts` (SKU, attributes, price, originalPrice, images)
 
-- [ ] `Inventory`
+- [x] `Inventory` — `src/models/Inventory.ts` (tồn kho theo từng variant)
 
 - [ ] Seed script: tạo vài category/brand/product/variant/inventory mẫu
 
