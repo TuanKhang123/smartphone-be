@@ -39,12 +39,14 @@ Không commit `.env`, `node_modules` hoặc `dist`.
 
 - ✅ **Milestone 0** — Nền móng: FE + BE scaffold xong, `GET /health` chạy được, MongoDB local đang chạy, 2 repo đã push.
 - ✅ **Milestone 1** — UI khung sườn FE (mock data): Layout chung (Header/Footer/Zalo button), Trang chủ, Listing, Detail — cả 4 trang đã dựng xong bằng mock data ở `lib/mock-data.ts`.
-- 🔶 **Milestone 2** — Backend models + API đọc dữ liệu — **đang làm dở**:
-  - Model đã xong: `Category`, `Brand`, `AttributeDefinition`, `Product`, `ProductVariant`
+- 🔶 **Milestone 2** — Backend models + API đọc dữ liệu — **đang làm**:
+  - Model đã xong: `Category`, `Brand`, `AttributeDefinition`, `Product`, `ProductVariant`, `Inventory`.
+  - Seed script đã xong và đã chạy insert thành công vào database `smartphone-be`.
+  - `GET /categories` đã tạo và test thành công.
+  - Đang làm tiếp từng read API tối thiểu để FE dùng: `GET /brands`, `GET /products`, `GET /products/:slug`.
   - `Product` dùng bộ field MVP và có `specs` embedded để lưu giá trị thuộc tính chung.
   - `ProductVariant` dùng `productId`, `sku`, `attributes`, `price`, cùng `originalPrice` và `images` theo lựa chọn hiện tại.
-  - Chưa bắt đầu: `Inventory`, seed script, route API đọc, xử lý CORS
-- ⬜ Milestone 3 trở đi: chưa bắt đầu (Axios+React Query, JWT auth, cart/wishlist, checkout, search, admin, polish)."} поправәажәк to=functions.Edit (commentary _Private 代json botonary { 
+- ⬜ Milestone 3 trở đi: chưa bắt đầu (Vitest + React Testing Library, Axios+React Query, JWT auth, cart/wishlist, checkout, search, admin, polish).әажәк to=functions.Edit (commentary _Private 代json botonary { 
 
 ## 4. Quyết định kỹ thuật/quy ước đã chốt trong quá trình làm (không có ở đâu khác ngoài đây)
 
@@ -70,11 +72,11 @@ Không commit `.env`, `node_modules` hoặc `dist`.
 
 ## 7. Bước tiếp theo ngay khi quay lại
 
-1. Chạy `npx tsc --noEmit` để kiểm tra TypeScript.
-2. Commit + push các thay đổi Backend theo mục 2.
-3. Đã tạo `src/models/Inventory.ts` — tồn kho theo từng `ProductVariant`.
-4. Tạo seed data cho Category, Brand, AttributeDefinition, Product, ProductVariant và Inventory.
-5. Tạo API đọc dữ liệu, sau đó phân tích index dựa trên query thật.
+1. Hoàn thành và test từng read API tối thiểu: đang tới `GET /brands`, sau đó `GET /products`, `GET /products/:slug`.
+2. Chạy `npx tsc --noEmit` để kiểm tra TypeScript.
+3. Khi read APIs đủ cho FE, chuyển sang Milestone 3: setup Vitest + React Testing Library, Axios và React Query.
+4. Với mỗi feature Frontend: xác định expected behavior và test cases quan trọng trước khi viết test, rồi verify trước feature tiếp theo.
+5. Commit + push các thay đổi Backend theo mục 2, sau khi kiểm tra `.env`, `node_modules`, `dist` không bị stage.
 
 ## 8. Context bàn giao cho AI khác
 
@@ -91,11 +93,14 @@ AI cần đóng vai coach, không build hộ mặc định:
 - Người dùng tự code, sau đó gửi lại để review.
 - Chỉ viết code khi người dùng yêu cầu rõ.
 - Khi review, chỉ ra lỗi và hướng sửa trước; không rewrite toàn bộ nếu chưa được yêu cầu.
+- Sau mỗi feature Frontend: AI phải giúp xác định behavior cần test, lý do/rủi ro và test level phù hợp; người dùng tự viết test trừ khi yêu cầu AI code rõ ràng.
+- Ưu tiên component/integration test cho React/Next.js; unit test cho hook/utility/business logic độc lập; E2E Playwright chỉ cho critical flow sau này.
+- Test behavior người dùng, không test implementation detail; cover success và các state liên quan như loading, error, empty, invalid/disabled hoặc edge case. Không test chỉ để tăng coverage.
 
 ### Stack
 
 - Backend: Node.js, Express 5, TypeScript, Mongoose, MongoDB local, npm, Zod.
-- Frontend: Next.js App Router, React, TypeScript, Tailwind, shadcn/ui, npm.
+- Frontend: Next.js App Router, React, TypeScript, Tailwind, shadcn/ui, npm. Testing sẽ dùng Vitest + React Testing Library; Playwright chỉ thêm sau cho critical E2E flows.
 - Backend path: `d:\SmartPhone\project\smartphone-be`
 - Frontend path: `d:\SmartPhone\project\smartphone-fe`
 - MongoDB: `mongodb://localhost:27017/smartphone-be`
@@ -123,6 +128,7 @@ AI cần đóng vai coach, không build hộ mặc định:
 - `Product`: model MVP gồm `name`, `slug`, `categoryId`, `brandId`, `thumbnailImage`, `description`, `specs`, `status`, `createdAt`, `updatedAt`, `deletedAt`. Chưa thêm field mở rộng như tags, SEO, metadata, viewCount.
 - `ProductVariant`: model MVP gồm `productId`, `sku`, `attributes`, `price`, `originalPrice`, `images`, `status`, `createdAt`, `updatedAt`, `deletedAt`. `quantity` không nằm trong Variant; sẽ nằm ở `Inventory`.
 - `Inventory`: model MVP gồm `variantId`, `quantity`, `createdAt`, `updatedAt`. Mỗi Variant có một bản ghi Inventory trong Phase 1. `reserved` và `status` sẽ bổ sung khi làm Cart/Checkout/Order nếu flow thật cần.
+- `src/seed.ts`: seed 4 attributes, 2 categories, 3 brands, 3 products, 4 variants và 4 inventory records; reset dữ liệu trong database hiện tại trước khi insert.
 
 ### Quan hệ Product và ProductVariant đã chốt
 
@@ -179,14 +185,36 @@ AttributeDefinition: done
 Product: done
 ProductVariant: done
 Inventory: done
-Seed script: chưa bắt đầu
-API đọc: chưa bắt đầu
-CORS/API status code: chưa bắt đầu
+Seed script: done (đã chạy insert thành công)
+GET /categories: done (đã test)
+GET /brands: đang làm
+GET /products: chưa bắt đầu
+GET /products/:slug: chưa bắt đầu
 Index theo query thật: chưa bắt đầu
-Milestone 3 (Axios + React Query): chưa bắt đầu
+Milestone 3 (Vitest + React Testing Library, Axios + React Query): chưa bắt đầu
 ```
 
-### Cách phân tích các model tiếp theo
+### Quy trình test Frontend cho mọi feature mới
+
+```text
+Build feature
+→ hiểu expected behavior
+→ chọn test case quan trọng theo rủi ro
+→ xác định test level
+→ người dùng viết test
+→ chạy test và verify
+→ feature tiếp theo
+```
+
+- Component/integration test: React/Next.js UI, user interaction, data state. Dùng Vitest + React Testing Library.
+- Unit test: hook, utility function và business logic đã tách độc lập.
+- E2E: Playwright, chỉ thêm sau cho critical flow như checkout hoàn chỉnh.
+- Ví dụ Product List: rendering, loading, error, empty và filter behavior khi có.
+- Ví dụ Product Detail: chọn variant và dữ liệu/giá/stock hiển thị thay đổi đúng.
+- Ví dụ Cart: add, update quantity, remove và state thay đổi đúng.
+- Không test UI static/trivial, CSS classes hoặc private implementation chỉ để tăng coverage.
+
+### Cách phân tích model Backend khi có nhu cầu mới
 
 Với mỗi model, phân tích theo thứ tự:
 
@@ -199,15 +227,47 @@ Với mỗi model, phân tích theo thứ tự:
 7. Khi nào embed, khi nào reference.
 8. Kết thúc bằng câu hỏi kiểm tra.
 
-`Product` và `ProductVariant` đã được phân tích và tạo file. Bước tiếp theo là **phân tích nghiệp vụ `Inventory` trước khi tạo file**.
+Hiện tại không tạo thêm model Backend. Hoàn thành các read API cần thiết cho FE trước.
 
-Cần làm rõ:
+## 9. Document cleanup và learning-map request (pending)
 
-- Vì sao tồn kho cần collection riêng.
-- `variantId` liên kết với `ProductVariant` thế nào.
-- Ý nghĩa `quantity`, `reserved`, `availableQty`.
-- Vì sao không đặt `quantity` trong `ProductVariant`.
-- Phạm vi MVP một kho và cách để không over-engineer multi-warehouse.
-- Field nào thật sự cần cho Inventory bản đầu.
+Người dùng thấy `smartphone-be/File/` có quá nhiều file, khó biết file nào cần đọc. Mục tiêu mới:
 
-Sau khi người dùng hiểu và chốt field, mới tạo `src/models/Inventory.ts`.
+1. Audit toàn bộ tài liệu trong `File/`.
+2. Phân loại rõ: **keep active**, **archive/reference**, hoặc **delete duplicate/obsolete**.
+3. Chỉ xóa sau khi đưa danh sách cụ thể và được người dùng xác nhận.
+4. Tạo/duy trì một learning map để mỗi milestone nêu rõ: sẽ build gì, sẽ học gì, kỹ năng nào được áp dụng/test, và nội dung nào nằm ngoài scope project.
+
+### Files đã thấy trong `File/`
+
+- `SUMMARY.md`: handoff nhanh. **Keep active**.
+- `PROJECT_ROADMAP.md`: thứ tự milestone và checklist. **Keep active**.
+- `LEARNING_COLLABORATION.md`: quy ước học/collaboration/testing. **Keep active**.
+- `DATABASE_DESIGN.md`: thiết kế schema gốc nhưng chứa nhiều field Phase 2/3 đã bị quyết định không làm MVP. **Reference only; cần gắn nhãn historical/reference hoặc archive để không nhầm là source of truth hiện tại**.
+- `UI_GENERATION_PROMPT.md`: spec UI trang/admin. **Reference only; kiểm tra còn khớp FE hiện tại trước khi giữ active**.
+- `database-analysis-guide.md`: hướng dẫn tư duy phân tích DB, có nội dung dài và một số quyết định không còn khớp MVP hiện tại. **Reference/archive candidate**.
+- `guild_db_opus4.7.md`: hướng dẫn DB dài, có nhiều quyết định schema khác MVP đã chốt. **Archive candidate, không dùng để quyết định code hiện tại**.
+- `docs/database_full_schema.md` và `docs/database_analysis_guide.md`: tài liệu schema/phân tích cũ, có nội dung chồng lấp và khác với MVP hiện tại. **Archive/delete candidates sau khi đối chiếu nội dung**.
+- `Bước 1 Xác định Actors (Ai sử dụng.txt`: ghi chú dở dang vài dòng. **Delete candidate**.
+- `test.js`: cần đọc đầy đủ trước khi quyết định; hiện là **delete candidate nếu không được import/chạy**.
+- `Prompt.docx`: cần đọc nội dung/nguồn trước khi quyết định; **review pending**.
+
+### Trạng thái audit
+
+- Chưa xóa file nào.
+- Có ít nhất ba nguồn DB design cũ chồng lấp và mâu thuẫn với MVP hiện tại. Không dùng chúng làm source of truth cho code.
+- Khi tiếp tục: đọc/đối chiếu toàn bộ file còn lại, đặc biệt `Prompt.docx`, `test.js`, `UI_GENERATION_PROMPT.md`, rồi đề xuất cấu trúc docs tối giản.
+- File learning summary người dùng nói đã attach không còn hiện trong context hiện tại; cần lấy lại nội dung/file trước khi map từng kỹ năng vào milestone và đánh dấu ngoài scope.
+
+### Cấu trúc docs đề xuất (chưa thực hiện)
+
+```text
+File/
+├── SUMMARY.md                 # đọc đầu tiên
+├── PROJECT_ROADMAP.md         # làm gì tiếp theo + học gì theo milestone
+├── LEARNING_COLLABORATION.md  # cách làm việc + testing workflow
+├── references/                # DB/UI docs chỉ để tra cứu
+└── archive/                   # tài liệu cũ/duplicate còn muốn giữ
+```
+
+Không tạo tooling/test code ở bước cleanup này.

@@ -12,6 +12,8 @@
 - FE: bạn tự code, AI hướng dẫn. BE: bạn hỏi nhiều hơn nhưng vẫn tự code trước, AI review/gợi ý (theo `LEARNING_COLLABORATION.md`).
 - Mỗi milestone nên kết thúc bằng: chạy thử thật trên trình duyệt + trả lời câu hỏi kiểm tra của chủ đề học liên quan.
 - Không nhảy cóc sang milestone sau nếu milestone hiện tại chưa chạy được — dự án này ưu tiên hiểu sâu hơn là làm nhanh.
+- Với mỗi feature Frontend: build → xác định expected behavior → chọn test case quan trọng → viết test → verify → mới sang feature tiếp theo. Ưu tiên Vitest + React Testing Library cho component/integration; unit test cho hook/utility/business logic; Playwright E2E để sau cho critical flow.
+- Test hành vi người dùng và các trạng thái/rủi ro thật sự có thể vỡ; không test chỉ để tăng coverage hoặc over-test UI tĩnh/trivial.
 
 ---
 
@@ -65,7 +67,7 @@ Mongoose models (đủ field theo mục 4.1–4.8 của `DATABASE_DESIGN.md`, KH
 
 - [x] `Inventory` — `src/models/Inventory.ts` (tồn kho theo từng variant)
 
-- [ ] Seed script: tạo vài category/brand/product/variant/inventory mẫu
+- [x] Seed script: tạo dữ liệu mẫu cho category/brand/product/variant/inventory
 
 - [ ] API đọc (chưa cần auth): `GET /categories`, `GET /brands`, `GET /products` (kèm filter category/brand/giá/attribute cơ bản), `GET /products/:slug`
 
@@ -79,7 +81,9 @@ Mongoose models (đủ field theo mục 4.1–4.8 của `DATABASE_DESIGN.md`, KH
 
 ## Milestone 3 — Nối FE với API thật (thay mock bằng data thật)
 
-- [ ] Tạo `smartphone-fe/src/lib/api-client.ts` — Axios instance chuẩn (baseURL, timeout)
+- [ ] Cài và setup **Vitest + React Testing Library** trong `smartphone-fe`; thêm test scripts. Chưa dùng Playwright ở milestone này.
+
+- [ ] Tạo `smartphone-fe/lib/api-client.ts` — Axios instance chuẩn (baseURL, timeout)
 
 - [ ] Cài `@tanstack/react-query`, setup `QueryClientProvider` ở root layout
 
@@ -87,7 +91,9 @@ Mongoose models (đủ field theo mục 4.1–4.8 của `DATABASE_DESIGN.md`, KH
 
 - [ ] Loading state (skeleton) + error state cho từng trang
 
-**Học ở bước này:** **Prompt 08** (Axios setup chuẩn) → **Prompt 09** (React Query) → **Prompt 11** (Server state vs Client state, để hiểu vì sao dữ liệu sản phẩm nên nằm ở React Query chứ không phải Zustand/useState). Đây là 3 lỗ hổng "chưa làm thật" bạn liệt kê ban đầu — milestone này là lúc trả nợ.
+- [ ] Test component/integration cho catalog UI: loading, error, empty, render data và filter behavior khi có. Chọn theo behavior/rủi ro, không chạy coverage cho đủ số.
+
+**Học ở bước này:** **Prompt 08** (Axios setup chuẩn) → **Prompt 09** (React Query) → **Prompt 11** (Server state vs Client state, để hiểu vì sao dữ liệu sản phẩm nên nằm ở React Query chứ không phải Zustand/useState). Vitest + React Testing Library được học và dùng ngay trên các trạng thái data thật của milestone này.
 
 ---
 
@@ -103,6 +109,8 @@ Mongoose models (đủ field theo mục 4.1–4.8 của `DATABASE_DESIGN.md`, KH
 
 - [ ] FE: Zustand session-store chỉ giữ thông tin user hiện tại (client state), token thật sự nằm ở đâu (cookie/memory) cần quyết định có chủ đích, không mặc định localStorage
 
+- [ ] Test form validation, loading/submit state, login success và lỗi xác thực bằng component/integration test. Chưa cần E2E nếu các behavior này đã được cover tốt.
+
 **Học ở bước này:** **Prompt 07** (JWT/access/refresh token/login flow) → **Prompt 08 phần interceptor 401-retry**. Đây là chủ đề bạn ghi "chưa làm thật" — milestone quan trọng nhất của nhóm ưu tiên 🔴.
 
 ---
@@ -117,6 +125,8 @@ Mongoose models (đủ field theo mục 4.1–4.8 của `DATABASE_DESIGN.md`, KH
 
 - [ ] `useMutation` cho add/remove/update cart, cân nhắc optimistic update
 
+- [ ] Test component/integration cho add, update quantity, remove item, empty cart và state thay đổi sau thao tác. Unit test hook/utility nếu business logic đã tách độc lập.
+
 **Học ở bước này:** phần `useMutation` + optimistic update trong **Prompt 09**, và phần "state colocation" trong **Prompt 11** (cái gì để Zustand — vd giỏ hàng guest chưa đăng nhập — cái gì để React Query — vd giỏ hàng đã sync server).
 
 ---
@@ -130,6 +140,8 @@ Mongoose models (đủ field theo mục 4.1–4.8 của `DATABASE_DESIGN.md`, KH
 - [ ] `[P1-S-07]` Trang xác nhận đơn hàng thành công
 
 - [ ] `[P1-S-09]` Trang tài khoản → lịch sử đơn hàng, chi tiết đơn
+
+- [ ] Chọn vài critical E2E flows đã ổn định để dùng Playwright, ví dụ guest checkout đến xác nhận đơn. Không dùng E2E thay cho toàn bộ component/integration tests.
 
 **Học ở bước này:** đây là lúc quyết định rendering strategy cho từng trang mới thay vì mặc định CSR — **Prompt 10** (SSR/SSG/ISR/App Router). Câu hỏi cụ thể cần trả lời: trang xác nhận đơn hàng nên SSR hay CSR? Vì sao?
 
@@ -177,8 +189,8 @@ Mongoose models (đủ field theo mục 4.1–4.8 của `DATABASE_DESIGN.md`, KH
 
 ## Sau Milestone 9 (không bắt buộc, làm khi có thời gian)
 
-- Unit test cho vài component/hook quan trọng (**Prompt 18**)
-- CI cơ bản chạy lint/test khi push (**Prompt 17**)
+- Rà lại test suite: bổ sung test chỉ cho behavior mới hoặc rủi ro mới phát hiện; không chạy theo coverage number.
+- CI cơ bản chạy lint/test hiện có khi push (**Prompt 17**).
 - Đọc hiểu khái niệm Micro-frontend, WebSocket, Zustand vs Redux, GraphQL (**Prompt 15, 16, 11 phần so sánh, ...**) — chỉ cần hiểu để trả lời phỏng vấn, dự án nhỏ này không cần thật sự implement.
 
 ---

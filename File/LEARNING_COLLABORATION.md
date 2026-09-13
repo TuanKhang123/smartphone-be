@@ -19,6 +19,7 @@ Mặc định AI sẽ:
 - Đặt câu hỏi kiểm tra để xác nhận Khang hiểu đúng
 - Review code Khang đã viết: chỉ ra lỗi, chỗ nên cải thiện, hỏi lại để Khang tự nhận ra vấn đề thay vì sửa hộ luôn
 - Gợi ý hướng đi khi Khang bị bug/bí, không đưa lời giải trọn gói ngay
+- Sau mỗi feature Frontend: cùng xác định hành vi cần test, lý do/rủi ro và loại test phù hợp trước khi viết test
 
 Mặc định AI **không**:
 
@@ -49,15 +50,29 @@ Khi build lại từng phần, đây là các chủ đề trong `learning_prompt
 | Lazy loading / code splitting | Áp dụng khi thêm các trang/khu vực nặng (trang admin, biểu đồ báo cáo...) |
 | Shared component tự build | Khi build lại UI kit cơ bản (Button, Input, Modal...) thay vì chỉ copy từ shadcn mà không hiểu |
 | Cache layers, Bundle optimization | Xem lại khi ứng dụng đã chạy được, trước khi launch/demo |
-| Micro-frontend, WebSocket, CI/CD, Testing, Zustand vs Redux, GraphQL | Áp dụng dần khi đụng tới phần liên quan, không cần làm ngay lúc khởi tạo dự án |
+| Testing Frontend | Sau mỗi feature Frontend: ưu tiên Vitest + React Testing Library cho component/integration; unit test cho hook, utility và business logic độc lập; Playwright để sau, chỉ cho critical E2E flows |
+| Micro-frontend, WebSocket, CI/CD, Zustand vs Redux, GraphQL | Áp dụng dần khi đụng tới phần liên quan, không cần làm ngay lúc khởi tạo dự án |
 
 ## 5. Quy trình mỗi khi bắt đầu một chủ đề/tính năng mới
 
 1. Khang nêu chủ đề hoặc tính năng muốn làm (vd: "giờ mình làm login" / "mình muốn hiểu React Query rồi áp dụng vào trang sản phẩm")
 2. AI xác định phần việc cụ thể liên quan trong dự án
 3. AI đưa hướng dẫn từng bước + câu hỏi kiểm tra hiểu — **không code trước**
-4. Khang tự làm
-5. Khang quay lại nhờ review, hỏi thêm, hoặc nhờ AI làm hộ nếu thật sự cần
+4. Khang tự làm feature
+5. Với feature Frontend, AI cùng Khang xác định expected behavior, các case dễ vỡ và loại test phù hợp trước khi viết test
+6. Khang tự viết test; AI review/gợi ý hoặc chỉ viết test khi được yêu cầu rõ
+7. Chạy test và verify behavior, rồi mới sang feature tiếp theo
+8. Khang quay lại nhờ review, hỏi thêm, hoặc nhờ AI làm hộ nếu thật sự cần
+
+### Quy ước test Frontend
+
+- Workflow bắt buộc: **build feature → hiểu expected behavior → chọn test cases quan trọng → viết test → verify → feature tiếp theo**.
+- Ưu tiên component/integration test cho React/Next.js UI bằng **Vitest + React Testing Library**.
+- Dùng unit test cho hook, utility function và business logic độc lập.
+- Chỉ dùng Playwright E2E sau, cho critical user flow thật sự cần browser đầy đủ.
+- Test hành vi người dùng nhìn thấy/thao tác được; không test private state, CSS class hay implementation detail.
+- Chọn case theo rủi ro thực tế: success và, khi liên quan, loading, error, empty, invalid input, disabled state, selection/state edge case.
+- Không viết test chỉ để tăng coverage; không over-test UI tĩnh/trivial.
 
 ## 6. Tiến độ
 
